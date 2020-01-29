@@ -1,6 +1,8 @@
-import React from 'react';
-import PropTypes from 'prop-types';
-import styled from 'styled-components';
+import React from "react";
+import PropTypes from "prop-types";
+import styled from "styled-components";
+import { useStoreState, useStoreActions } from "easy-peasy";
+import Todo from '../../components/Todo';
 
 const MainContainer = styled.main`
   background-color: #fff;
@@ -12,7 +14,29 @@ const MainContainer = styled.main`
 `;
 
 const Main = props => {
-  return <MainContainer></MainContainer>;
+  const inboxTodos = useStoreState(state => state.inbox.inboxTodos);
+  const addTodoToInbox = useStoreActions(actions => actions.inbox.addInboxTodo);
+
+  const test = () => {
+    addTodoToInbox({
+      uid: 3432324 + Math.random() * 1000,
+      text: "New todo",
+      creationDate: new Date().getTime(),
+      cheduleTime: new Date().getTime() + 100000,
+      labels: [],
+      projects: [],
+      priority: ""
+    });
+    // addTodoToInbox({index, text: 'newText'})
+  };
+
+  return (
+    <MainContainer>
+      {inboxTodos &&
+        inboxTodos.map((todo) => <Todo key={todo.uid} todo={todo} />)}
+      <button onClick={() => test()}>add todo</button>
+    </MainContainer>
+  );
 };
 
 Main.propTypes = {
