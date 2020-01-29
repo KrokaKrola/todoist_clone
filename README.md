@@ -4,4 +4,4 @@ This project was bootstrapped with [Create React App](https://github.com/faceboo
 
 ## Technologies used
 
-![Tech logos](https://i.imgur.com/7a6axuV.jpg)
+![Tech logos](https://i.imgur.com/Jq3Mf4F.png)
