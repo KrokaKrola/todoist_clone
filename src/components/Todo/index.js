@@ -1,8 +1,39 @@
-import React from "react";
-import PropTypes from "prop-types";
-import {Editor, EditorState, ContentState} from 'draft-js';
+import React, { useState, useRef, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import { Editor, EditorState, ContentState } from 'draft-js';
+import styled from 'styled-components';
+import { Button, Icon } from 'antd';
 
-const Todo = ({ todo }) => {
+const EditorItem = styled.form`
+  margin-right: 30px;
+  margin-bottom: 20px;
+  .DraftEditor-root {
+    position: relative;
+    .public-DraftEditorPlaceholder-root {
+      position: absolute;
+      left: 6px;
+      opacity: 0.4;
+      top: 50%;
+      transform: translateY(-50%);
+      pointer-events: none;
+    }
+  }
+`;
+
+const EditorItemActions = styled.div`
+  display: flex;
+  align-items: center;
+`;
+
+const EditorItemControls = styled.div`
+  display: flex;
+  font-size: 1.25rem;
+  & > * {
+    margin: 0 7px;
+  }
+`;
+
+const Todo = ({ todo, setFocusedUid, focus, newOne }) => {
   const {
     uid,
     text,
@@ -12,10 +43,61 @@ const Todo = ({ todo }) => {
     priority,
     creationDate
   } = todo;
-  const [editorState, setEditorState] = React.useState(
-    EditorState.createWithContent(ContentState.createFromText(text)),
+  const [editorState, setEditorState] = useState(
+    EditorState.createWithContent(ContentState.createFromText(text))
   );
-  return <Editor editorState={editorState} onChange={setEditorState} />;
+  const ref = useRef(editorState);
+  useEffect(() => {
+    if (newOne) {
+      ref.current.focus();
+    }
+  }, [newOne]);
+  return (
+    <EditorItem>
+      <Editor
+        editorState={editorState}
+        onChange={setEditorState}
+        onFocus={() => setFocusedUid(uid)}
+        ref={ref}
+        placeholder={'placeholder'}
+        spellCheck={true}
+      />
+      {focus && (
+        <EditorItemActions>
+          {newOne ? (
+            <Button
+              type="primary"
+              htmlType="submit"
+              style={{ marginRight: 10 }}
+            >
+              Add task
+            </Button>
+          ) : (
+            <Button
+              type="primary"
+              htmlType="submit"
+              style={{ marginRight: 10 }}
+            >
+              Save
+            </Button>
+          )}
+
+          <Button
+            type="link"
+            style={{ marginRight: 'auto' }}
+            onClick={() => setFocusedUid(null)}
+          >
+            Cancel
+          </Button>
+          <EditorItemControls>
+            <Icon type="unordered-list" />
+            <Icon type="tag" />
+            <Icon type="flag" />
+          </EditorItemControls>
+        </EditorItemActions>
+      )}
+    </EditorItem>
+  );
 };
 
 Todo.propTypes = {
